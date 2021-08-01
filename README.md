@@ -5,3 +5,5 @@ using the python libraries.
 Current Algos:-
 1.) Linear Regression
 2.) Logistic Regression
+3.) K-Means Algorithm
+4.) Shallow Neural Network
