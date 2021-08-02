@@ -7,16 +7,20 @@ x = ""
 y = ""
 
 def sigmoid_activation(z):
+    #returns the sigmoid activation values for the given z (no. of hidden units,m)
     return (1/(1+np.exp(-1*z)))
 
 def sigmoid_der(a):
+    #returns the derivative of sigmoid function for thr given activation values a (no. of hidden units,m)
     return np.multiply(a,(1-a))
 
 def relu_activation(z):
+    #returns the ReLU activation values for the given z (no. of hidden units,m)
     arr = np.maximum(z,0)
     return arr
 
 def relu_der(a):
+    #returns the derivative of ReLU function for thr given activation values a (no. of hidden units,m)
     def calc(x):
         if x:
             return 1
@@ -29,10 +33,12 @@ def relu_der(a):
     return a
     
 def leaky_relu_activation(z):
+    #returns the Leaky ReLU activation values for the given z (no. of hidden units,m)
     arr = np.maximum(z,0.01*z)
     return arr
 
 def relu_der(a):
+    #returns the derivative of Leaky ReLU function for thr given activation values a (no. of hidden units,m)
     def calc(x):
         if x:
             return 1
@@ -45,12 +51,17 @@ def relu_der(a):
     return a
 
 def calc_cost(yhat):
+    #calculates the cost value for the predicted a or yhat (1,m)
     global y
     losses = -1*(np.multiply(y,np.log(yhat))+np.multiply((1-y),np.log(1-yhat)))
     cost = np.sum(losses)
     return cost/y.shape[1]
 
 def calc_yhat(params):
+    #calculates the yhat using forward propogation, given parameters of neural network w(i),b(i)
+    #w(i).shape =  (n(i),n(i-1))
+    #b(i).shape = (n(i),1)
+    #the function returns the tuple of output values i.e z's and a's for future use
     global x
     z1 = np.matmul(params[0],x) + params[1]
     a1 = relu_activation(z1)
@@ -59,6 +70,13 @@ def calc_yhat(params):
     return (z1,a1,z2,a2)
 
 def calc_der(result,params):
+    #calculates the derivative of parameters dw(i) ,db(i) (dimensions same as w(i) and b(i)) and returns them in form of tuple
+    #use tuple returned by calc_yhat and parameters to calculate the derivatives
+    #da = w(i+1)T * dz(i+1)
+    #dz = da .* g'(z)       where, .* --> element wise multiplication
+    #                              g'(z) ---> derivative of activation function w.r.t z
+    #dw = dz*a(i-1)T
+    #db = sum(dz,axis = 1)
     global x,y
     dz2 = result[3] - y
     dw2 = np.matmul(dz2,np.transpose(result[1]))/y.shape[1]
