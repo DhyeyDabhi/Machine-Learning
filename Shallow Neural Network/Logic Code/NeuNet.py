@@ -87,6 +87,8 @@ def calc_der(result,params):
     return (dw1,db1,dw2,db2)
 
 def update_params(params,params_der):
+    #update the parameters as per the grad desc. algo
+    #learning rate = 0.01 , here assumed it 0.01 but should run a hyperparameter tuning process
     w1 = params[0] - 0.01*params_der[0]
     b1 = params[1] - 0.01*params_der[1]
     w2 = params[2] - 0.01*params_der[2]
@@ -119,8 +121,10 @@ if __name__=="__main__":
         result = calc_yhat(params)
         cost0 = cost1
         cost1 = calc_cost(result[3])
+    #plot the x's and y's given
     plt.scatter(x.reshape((x.shape[1],x.shape[0])),y.reshape((y.shape[1],y.shape[0])))
     x = np.linspace(0,100,1000)
+    #arrange x at equal intervals and calculate yhat at the respective x for plotting the curve
     x = x.reshape((1,x.shape[0]))
     yhat = calc_yhat(prev_params)
     yhat = np.array(yhat[3])
