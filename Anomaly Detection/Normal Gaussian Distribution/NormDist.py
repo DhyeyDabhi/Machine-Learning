@@ -6,6 +6,9 @@ x = ""
 y = ""
 
 def split_train_test():
+    #split the data set into training and testing data
+    #the splitting is done by classifying training set having y=0 i.e all non-anomalous data points
+    #and splitting into test set having y=1 i.e all anomalous data points
     global x,y
     bool_arr = (y==0)
     bool_arr = bool_arr.reshape((x.shape[0]))
@@ -18,6 +21,12 @@ def split_train_test():
     return (x_train,y_train,x_test,y_test)
 
 def calc_probab(x_test,x_mean,x_std_dev):
+    #calculate the probability of occurence of the given data-point
+    #mean and standard deviation are provided
+    # p(x) = mul i=1 --> i=n p(xi;ui,si)
+    # where xi is the ith feature of the x sample
+    # ui ---> mean of the ith feature
+    # si ---> stanndard deviation of the ith feature
     global x
     expo = -1*np.divide(np.power((x_test-x_mean),2),2*np.power(x_std_dev,2))
     probab = np.divide(np.exp(expo),2.506628*x_std_dev)
@@ -38,5 +47,6 @@ if __name__ == '__main__':
     x_std_dev = x_std_dev.reshape((1,x_std_dev.shape[0]))
     print(x_mean.shape,x_std_dev.shape)
     x_test_probab = calc_probab(x_test,x_mean,x_std_dev)
+    #classify the given x if the probability of occurence is  less than 10^(-20)
     classify_x_test = (x_test_probab<pow(10,-20))
     print(classify_x_test)
