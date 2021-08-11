@@ -7,3 +7,5 @@ Current Algos:-
 2.) Logistic Regression
 3.) K-Means Algorithm
 4.) Shallow Neural Network
+5.) Anomaly Detection
+6.) Dimensionality Reduction
