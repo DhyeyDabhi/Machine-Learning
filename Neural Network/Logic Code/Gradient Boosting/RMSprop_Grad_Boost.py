@@ -3,6 +3,10 @@ import numpy as np
 from sklearn.datasets import load_iris
 import matplotlib.pyplot as plt
 import datetime
+import math
+
+B = 0.9
+learning_rate = 0.01
 
 def sigmoid_activation(z):
     #returns the sigmoid activation values for the given z (no. of hidden units,m)
@@ -92,32 +96,46 @@ def calc_der(result,params):
 def update_params(params,params_der):
     #update the parameters as per the grad desc. algo
     #learning rate = 0.01 , here assumed it 0.01 but should run a hyperparameter tuning process
-    w1 = params[0] - 0.01*params_der[0]
-    b1 = params[1] - 0.01*params_der[1]
-    w2 = params[2] - 0.01*params_der[2]
-    b2 = params[3] - 0.01*params_der[3]
-    w3 = params[4] - 0.01*params_der[4]
-    b3 = params[5] - 0.01*params_der[5]
+    global v,B
+    v[0] = B*v[0] + (1-B)*pow(params_der[0],2)
+    v[1] = B*v[1] + (1-B)*pow(params_der[1],2)
+    v[2] = B*v[2] + (1-B)*pow(params_der[2],2)
+    v[3] = B*v[3] + (1-B)*pow(params_der[3],2)
+    v[4] = B*v[4] + (1-B)*pow(params_der[4],2)
+    v[5] = B*v[5] + (1-B)*pow(params_der[5],2)
+    w1 = params[0] - learning_rate*params_der[0]/(np.sqrt(v[0]+pow(10,-8)))
+    b1 = params[1] - learning_rate*params_der[1]/(np.sqrt(v[1]+pow(10,-8)))
+    w2 = params[2] - learning_rate*params_der[2]/(np.sqrt(v[2]+pow(10,-8)))
+    b2 = params[3] - learning_rate*params_der[3]/(np.sqrt(v[3]+pow(10,-8)))
+    w3 = params[4] - learning_rate*params_der[4]/(np.sqrt(v[4]+pow(10,-8)))
+    b3 = params[5] - learning_rate*params_der[5]/(np.sqrt(v[5]+pow(10,-8)))
     return (w1,b1,w2,b2,w3,b3)
 
 if __name__=="__main__":
-    df = pd.read_excel('./Opportunity.xlsx')
+    df = pd.read_excel('../Opportunity.xlsx')
     x = np.array(df.iloc[:,0])
     x = x.reshape((1,x.shape[0]))
     y = np.array(df.iloc[:,1])
     y = y.reshape((1,y.shape[0]))
     w1 = np.random.randn(4,x.shape[0])/10
+    vdw1 = np.zeros((4,x.shape[0]))
     b1 = np.zeros((4,1))
+    vdb1 = np.zeros((4,1))
     w2 = np.random.randn(4,4)/10
+    vdw2 = np.zeros((4,4))
     b2 = np.zeros((4,1))
-    w3 = np.random.rand(1,4)/10
+    vdb2 = np.zeros((4,1))
+    w3 = np.random.randn(1,4)/10
+    vdw3 = np.zeros((1,4))
     b3 = np.zeros((1,1))
+    vdb3 = np.zeros((1,1))
     params = (w1,b1,w2,b2,w3,b3)
     time1 = datetime.datetime.now()
     #-------------------------------------------
     result = calc_yhat(params)
     cost0 = calc_cost(result[5])
     params_der = calc_der(result,params)
+    v = [vdw1,vdb1,vdw2,vdb2,vdw3,vdb3]
     params = update_params(params,params_der)
     #--------------------------------------------
     result = calc_yhat(params)
